@@ -1,18 +1,26 @@
 package edu.duke.sw685.battleship;
 
-public class BattleShipBoard {
+public class BattleShipBoard implements Board {
     private final int width;
     private final int height;
 
-    public BattleShipBoard(int width, int height) {
-          if (width <= 0) {
-          throw new IllegalArgumentException("BattleShipBoard's width must be positive but is " + width);
+ /**
+   * Constructs a BattleShipBoard with the specified width
+   * and height
+   * @param w is the width of the newly constructed board.
+   * @param h is the height of the newly constructed board.
+   * @throws IllegalArgumentException if the width or height are less than or equal to zero.
+   */
+
+    public BattleShipBoard(int w, int h) {
+          if (w <= 0) {
+          throw new IllegalArgumentException("BattleShipBoard's width must be positive but is " + w);
     }
-          if (height <= 0) {
-          throw new IllegalArgumentException("BattleShipBoard's height must be positive but is " + height);
+          if (h <= 0) {
+          throw new IllegalArgumentException("BattleShipBoard's height must be positive but is " + h);
     }
-        this.width = width;
-        this.height = height;
+        this.width = w;
+        this.height = h;
     }
 
     public int getWidth() {
