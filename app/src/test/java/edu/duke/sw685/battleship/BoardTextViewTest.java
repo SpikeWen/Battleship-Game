@@ -54,4 +54,28 @@ public class BoardTextViewTest {
     assertThrows(IllegalArgumentException.class, () -> new BoardTextView(wideBoard));
     assertThrows(IllegalArgumentException.class, () -> new BoardTextView(tallBoard));
   }
+
+//tests after adding some ships
+@Test
+public void test_display_board_with_multiple_ships() {
+    Board<Character> b = new BattleShipBoard<Character>(3, 3);
+    BoardTextView view = new BoardTextView(b);
+    
+    // Add ships at all positions
+    b.tryAddShip(new BasicShip(new Coordinate(0, 0)));
+    b.tryAddShip(new BasicShip(new Coordinate(0, 2)));
+    b.tryAddShip(new BasicShip(new Coordinate(1, 1)));
+    b.tryAddShip(new BasicShip(new Coordinate(2, 0)));
+    b.tryAddShip(new BasicShip(new Coordinate(2, 2)));
+    
+    String expectedHeader = "  0|1|2\n";
+    String expected = 
+        expectedHeader +
+        "A s| |s A\n" +
+        "B  |s|  B\n" +
+        "C s| |s C\n" +
+        expectedHeader;
+    assertEquals(expected, view.displayMyOwnBoard());
+}
+
 }

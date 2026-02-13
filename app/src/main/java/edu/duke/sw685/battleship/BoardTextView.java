@@ -58,12 +58,17 @@ public class BoardTextView {
       char rowLetter = (char) ('A' + row);
       ans.append(rowLetter);
       ans.append(" ");
-      
+      String sep = ""; // start with nothing to separate, then switch to | to separate
       for (int col = 0; col < toDisplay.getWidth(); col++) {
-        if (col > 0) {
-          ans.append("|");
-        }
-        ans.append(" "); // empty space for now
+        ans.append(sep);
+        Coordinate c = new Coordinate(row, col);
+        Character displayChar = toDisplay.whatIsAt(c);  // show ship character 
+          if (displayChar == null) {
+              ans.append(" ");
+          } else {
+              ans.append(displayChar); 
+          }
+        sep = "|";
       }
       
       ans.append(" ");
