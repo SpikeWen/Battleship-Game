@@ -62,11 +62,11 @@ public void test_display_board_with_multiple_ships() {
     BoardTextView view = new BoardTextView(b);
     
     // Add ships at all positions
-    b.tryAddShip(new BasicShip(new Coordinate(0, 0)));
-    b.tryAddShip(new BasicShip(new Coordinate(0, 2)));
-    b.tryAddShip(new BasicShip(new Coordinate(1, 1)));
-    b.tryAddShip(new BasicShip(new Coordinate(2, 0)));
-    b.tryAddShip(new BasicShip(new Coordinate(2, 2)));
+    b.tryAddShip(new RectangleShip<Character>("ship1", new Coordinate(0, 0), 's', '*'));
+    b.tryAddShip(new RectangleShip<Character>("ship2", new Coordinate(0, 2), 's', '*'));
+    b.tryAddShip(new RectangleShip<Character>("ship3", new Coordinate(1, 1), 's', '*'));
+    b.tryAddShip(new RectangleShip<Character>("ship4", new Coordinate(2, 0), 's', '*'));
+    b.tryAddShip(new RectangleShip<Character>("ship5", new Coordinate(2, 2), 's', '*'));
     
     String expectedHeader = "  0|1|2\n";
     String expected = 

@@ -52,7 +52,7 @@ public class BattleShipBoardTest {
     
     // Add a ship at (1, 1)
     Coordinate c1 = new Coordinate(1, 1);
-    Ship<Character> s1 = new BasicShip(c1);
+    Ship<Character> s1 = new RectangleShip<Character>("testship", c1, 's', '*');
     assertTrue(b.tryAddShip(s1));
     
     Character[][] expected1 = {
@@ -64,7 +64,7 @@ public class BattleShipBoardTest {
     
     // Add another ship at (0, 2)
     Coordinate c2 = new Coordinate(0, 2);
-    Ship<Character> s2 = new BasicShip(c2);
+    Ship<Character> s2 = new RectangleShip<Character>("testship2", c2, 's', '*');
     assertTrue(b.tryAddShip(s2));
     
     Character[][] expected2 = {
@@ -76,7 +76,7 @@ public class BattleShipBoardTest {
     
     // Add a third ship at (2, 0)
     Coordinate c3 = new Coordinate(2, 0);
-    Ship<Character> s3 = new BasicShip(c3);
+    Ship<Character> s3 = new RectangleShip<Character>("testship3", c3, 's', '*');
     assertTrue(b.tryAddShip(s3));
     
     Character[][] expected3 = {

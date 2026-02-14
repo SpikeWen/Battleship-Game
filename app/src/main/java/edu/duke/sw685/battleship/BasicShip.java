@@ -1,41 +1,67 @@
 package edu.duke.sw685.battleship;
 
-/**
- * This is a placeholder implementation of Ship for testing purposes.
- * It represents a ship that occupies only one coordinate.
- * This will be replaced with a full implementation in Task 10.
- */
-public class BasicShip implements Ship<Character> {
-  private final Coordinate myLocation;
-  public BasicShip(Coordinate where) {
-    this.myLocation = where;
+import java.util.HashMap;
+public abstract class BasicShip<T> implements Ship<T> {
+  protected HashMap<Coordinate, Boolean> myPieces;
+  protected ShipDisplayInfo<T> myDisplayInfo;
+
+  /**
+   * Constructs a BasicShip with the given coordinates
+   * 
+   * @param where is an Iterable of coordinates the ship occupies
+   * @param myDisplayInfo is the display information for this ship
+   */
+  public BasicShip(Iterable<Coordinate> where, ShipDisplayInfo<T> myDisplayInfo) {
+    this.myPieces = new HashMap<Coordinate, Boolean>();
+    this.myDisplayInfo = myDisplayInfo;
+    for (Coordinate c : where) {
+      this.myPieces.put(c, false);
+    }
   }
 
   @Override
   public boolean occupiesCoordinates(Coordinate where) {
-    return where.equals(myLocation);
+    return myPieces.containsKey(where);
   }
 
   @Override
   public boolean isSunk() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Not implemented yet");
+    for (Boolean hit : myPieces.values()) {
+      if (!hit) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Override
   public void recordHitAt(Coordinate where) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Not implemented yet");
+    checkCoordinateInThisShip(where);
+    myPieces.put(where, true);
   }
 
   @Override
   public boolean wasHitAt(Coordinate where) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Not implemented yet");
+    checkCoordinateInThisShip(where);
+    return myPieces.get(where);
+  }
+
+  /**
+   * Check if a coordinate is part of this ship
+   * 
+   * @param c is the coordinate to check
+   * @throws IllegalArgumentException if c is not part of this ship
+   */
+  protected void checkCoordinateInThisShip(Coordinate c) {
+    if (!myPieces.containsKey(c)) {
+      throw new IllegalArgumentException("Coordinate " + c + " is not part of this ship");
+    }
   }
 
   @Override
-  public Character getDisplayInfoAt(Coordinate where) {
-    return 's';
+  public T getDisplayInfoAt(Coordinate where) {
+    checkCoordinateInThisShip(where);
+    // TODO: this needs to look up the hit status
+    return myDisplayInfo.getInfo(where, wasHitAt(where));
   }
 }
