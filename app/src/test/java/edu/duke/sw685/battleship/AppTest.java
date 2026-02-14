@@ -21,7 +21,8 @@ public class AppTest {
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
     PrintStream ps = new PrintStream(bytes, true);
     Board<Character> b = new BattleShipBoard<Character>(10, 20);
-    App app = new App(b, sr, ps);
+    AbstractShipFactory<Character> factory = new V1ShipFactory();
+    App app = new App(b, sr, ps, factory);
 
     String prompt = "Please enter a location for a ship:";
     Placement[] expected = new Placement[3];
@@ -39,19 +40,20 @@ public class AppTest {
 
   @Test
   void test_do_one_placement() throws IOException {
-    StringReader sr = new StringReader("B2V\n");
+    StringReader sr = new StringReader("A0V\n");
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
     PrintStream ps = new PrintStream(bytes, true);
-    Board<Character> b = new BattleShipBoard<Character>(3, 3);
-    App app = new App(b, sr, ps);
+    Board<Character> b = new BattleShipBoard<Character>(4, 3);
+    AbstractShipFactory<Character> factory = new V1ShipFactory();
+    App app = new App(b, sr, ps, factory);
 
     String expectedPrompt = "Where would you like to put your ship?\n";
     String expectedBoard = 
-        "  0|1|2\n" +
-        "A  | |  A\n" +
-        "B  | |s B\n" +
-        "C  | |  C\n" +
-        "  0|1|2\n";
+        "  0|1|2|3\n" +
+        "A d| | |  A\n" +
+        "B d| | |  B\n" +
+        "C d| | |  C\n" +
+        "  0|1|2|3\n";
     String expected = expectedPrompt + expectedBoard;
 
     app.doOnePlacement();

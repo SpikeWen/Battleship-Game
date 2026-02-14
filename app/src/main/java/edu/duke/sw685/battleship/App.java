@@ -11,18 +11,20 @@ public class App {
   final BoardTextView view;
   final BufferedReader inputReader;
   final PrintStream out;
-
+  final AbstractShipFactory<Character> shipFactory;
   /**
    * Constructor
    * @param theBoard is the board to use
    * @param inputSource is where to read input from
    * @param out is where to print output to
+   *  @param shipFactory is the factory to create ships
    */
-  public App(Board<Character> theBoard, Reader inputSource, PrintStream out) {
+  public App(Board<Character> theBoard, Reader inputSource, PrintStream out, AbstractShipFactory<Character> shipFactory) {
     this.theBoard = theBoard;
     this.view = new BoardTextView(theBoard);
     this.inputReader = new BufferedReader(inputSource);
     this.out = out;
+    this.shipFactory = shipFactory;
   }
 
   /**
@@ -42,7 +44,7 @@ public class App {
    */
   public void doOnePlacement() throws IOException {
     Placement p = readPlacement("Where would you like to put your ship?");
-    Ship<Character> s = new RectangleShip<Character>("testship", p.getWhere(), 's', '*');
+    Ship<Character> s = shipFactory.makeDestroyer(p);
     theBoard.tryAddShip(s);
     out.print(view.displayMyOwnBoard());
   }
@@ -51,7 +53,8 @@ public class App {
   
   public static void main(String[] args) throws IOException {
     Board<Character> b = new BattleShipBoard<Character>(10, 20);
-    App app = new App(b, new java.io.InputStreamReader(System.in), System.out);
+    AbstractShipFactory<Character> factory = new V1ShipFactory();
+    App app = new App(b, new java.io.InputStreamReader(System.in), System.out, factory);
     app.doOnePlacement();
   }
 }

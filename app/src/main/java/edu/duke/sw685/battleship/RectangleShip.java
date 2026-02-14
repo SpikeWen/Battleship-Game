@@ -2,14 +2,8 @@ package edu.duke.sw685.battleship;
 
 import java.util.HashSet;
 
-/**
- * A ship that occupies a rectangular region on the board
- */
+// A  rectangular region ship
 public class RectangleShip<T> extends BasicShip<T> {
-
-  /**
-   * The name of this ship (e.g., "submarine", "destroyer")
-   */
   private final String name;
 
   /**
