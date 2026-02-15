@@ -15,7 +15,7 @@ import org.junit.jupiter.api.parallel.ResourceAccessMode;
 
 public class AppTest {
 
-  @Disabled
+
   @Test
   @ResourceLock(value = Resources.SYSTEM_OUT, mode = ResourceAccessMode.READ_WRITE)
   void test_main() throws IOException {

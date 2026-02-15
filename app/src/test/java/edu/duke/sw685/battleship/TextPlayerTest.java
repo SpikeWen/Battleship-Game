@@ -63,28 +63,57 @@ public class TextPlayerTest {
         "  0|1|2|3\n";
     String expected = expectedPrompt + expectedBoard;
 
-    player.doOnePlacement();
+    player.doOnePlacement("Destroyer", player.shipCreationFns.get("Destroyer"));
     assertEquals(expected, bytes.toString());
   }
 
   @Test
   void test_doPlacementPhase() throws IOException {
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-    TextPlayer player = createTextPlayer(4, 3, "A0V\n", bytes);
+    String input = "A0V\nA1V\n" +      // 2 submarines
+                   "B0V\nB1V\nB2V\n" + // 3 destroyers
+                   "C0V\nC1V\nC2V\n" + // 3 battleships
+                   "D0V\nD1V\n";       // 2 carriers
+    
+    TextPlayer player = createTextPlayer(10, 20, input, bytes);
 
     player.doPlacementPhase();
     
     String output = bytes.toString();
-    
-    assertTrue(output.contains("  0|1|2|3"));
+    assertTrue(output.contains("  0|1|2|3|4|5|6|7|8|9"));
     assertTrue(output.contains("Player A: you are going to place the following ships"));
-    assertTrue(output.contains("2 \"Submarines\" ships that are 1x2"));
-    assertTrue(output.contains("3 \"Destroyers\" that are 1x3"));
-    assertTrue(output.contains("3 \"Battleships\" that are 1x4"));
-    assertTrue(output.contains("2 \"Carriers\" that are 1x6"));
-    
-    // Check that output contains the placement prompt
+    assertTrue(output.contains("Player A where do you want to place a Submarine?"));
     assertTrue(output.contains("Player A where do you want to place a Destroyer?"));
-    assertTrue(output.contains("A d| | |  A"));
+    assertTrue(output.contains("Player A where do you want to place a Battleship?"));
+    assertTrue(output.contains("Player A where do you want to place a Carrier?"));
+    
+    // countOccurrences is a helper method to count how many times a substring appears in a string
+    int subCount = countOccurrences(output, "Player A where do you want to place a Submarine?");
+    assertEquals(2, subCount);
+    int dstCount = countOccurrences(output, "Player A where do you want to place a Destroyer?");
+    assertEquals(3, dstCount);
+    int batCount = countOccurrences(output, "Player A where do you want to place a Battleship?");
+    assertEquals(3, batCount);
+    int carCount = countOccurrences(output, "Player A where do you want to place a Carrier?");
+    assertEquals(2, carCount);
   }
+
+  // Helper method to count how many times a substring appears in a string
+  private int countOccurrences(String str, String substr) {
+    int count = 0;
+    int index = 0;
+    index=str.indexOf(substr, index);
+    while (index  != -1) {
+
+      count++;
+      index += substr.length();
+          index=str.indexOf(substr, index);
+    }
+    return count;
+  }
+  @Test
+void test_countOccurrences() {
+    String str3 = "hello world";
+    assertEquals(0, countOccurrences(str3, "goodbye"));
+}
 }
