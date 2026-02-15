@@ -128,5 +128,21 @@ public class RectangleShipTest {
 
     assertThrows(IllegalArgumentException.class,() -> ship.getDisplayInfoAt(new Coordinate(5, 5)));
   }
-
+@Test
+public void test_getCoordinates() {
+    RectangleShip<Character> ship = new RectangleShip<Character>("testship",
+                                                                   new Coordinate(1, 2),
+                                                                   1, 3, 's', '*');
+    
+    HashSet<Coordinate> expected = new HashSet<>();
+    expected.add(new Coordinate(1, 2));
+    expected.add(new Coordinate(2, 2));
+    expected.add(new Coordinate(3, 2));
+    
+    HashSet<Coordinate> actual = new HashSet<>();
+    for (Coordinate c : ship.getCoordinates()) {
+        actual.add(c);
+    }
+    assertEquals(expected, actual);
+}
 }

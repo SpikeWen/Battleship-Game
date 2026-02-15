@@ -64,4 +64,9 @@ public abstract class BasicShip<T> implements Ship<T> {
     // TODO: this needs to look up the hit status
     return myDisplayInfo.getInfo(where, wasHitAt(where));
   }
+
+  @Override
+  public Iterable<Coordinate> getCoordinates() {
+    return myPieces.keySet();
+}
 }
