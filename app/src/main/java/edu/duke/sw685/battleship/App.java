@@ -2,59 +2,50 @@ package edu.duke.sw685.battleship;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.Reader;
+import java.io.InputStreamReader;
 
-
+//entry of the game,create teo player
 public class App {
-  final Board<Character> theBoard;
-  final BoardTextView view;
-  final BufferedReader inputReader;
-  final PrintStream out;
-  final AbstractShipFactory<Character> shipFactory;
+  private final TextPlayer player1;
+  private final TextPlayer player2;
+
   /**
-   * Constructor
-   * @param theBoard is the board to use
-   * @param inputSource is where to read input from
-   * @param out is where to print output to
-   *  @param shipFactory is the factory to create ships
+   * Constructs an App with two players
+   * 
+   * @param player1 is the first player
+   * @param player2 is the second player
    */
-  public App(Board<Character> theBoard, Reader inputSource, PrintStream out, AbstractShipFactory<Character> shipFactory) {
-    this.theBoard = theBoard;
-    this.view = new BoardTextView(theBoard);
-    this.inputReader = new BufferedReader(inputSource);
-    this.out = out;
-    this.shipFactory = shipFactory;
+  public App(TextPlayer player1, TextPlayer player2) {
+    this.player1 = player1;
+    this.player2 = player2;
   }
 
   /**
-   * Reads a placement from the input(user)
-   * @param prompt is the prompt to display to the user
-   * @return the Placement entered by the user
+   * Performs the placement phase for both players
+   * 
+   * @throws IOException if there is an error reading input
    */
-  public Placement readPlacement(String prompt) throws IOException {
-    out.println(prompt);
-    String s = inputReader.readLine();
-    return new Placement(s);
+  public void doPlacementPhase() throws IOException {
+    player1.doPlacementPhase();
+    player2.doPlacementPhase();
   }
 
   /**
-   * Does one placement: reads a placement, creates a ship, adds it to the board,
-   * and displays the board
+   * Main entry point for the application
+   * 
+   * @param args command line arguments (not used)
+   * @throws IOException if there is an error reading input
    */
-  public void doOnePlacement() throws IOException {
-    Placement p = readPlacement("Where would you like to put your ship?");
-    Ship<Character> s = shipFactory.makeDestroyer(p);
-    theBoard.tryAddShip(s);
-    out.print(view.displayMyOwnBoard());
-  }
-
-// entry of the program
-  
   public static void main(String[] args) throws IOException {
-    Board<Character> b = new BattleShipBoard<Character>(10, 20);
-    AbstractShipFactory<Character> factory = new V1ShipFactory();
-    App app = new App(b, new java.io.InputStreamReader(System.in), System.out, factory);
-    app.doOnePlacement();
+    Board<Character> b1 = new BattleShipBoard<Character>(10, 20);
+    Board<Character> b2 = new BattleShipBoard<Character>(10, 20);
+    BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+    V1ShipFactory factory = new V1ShipFactory();
+    
+    TextPlayer player1 = new TextPlayer("A", b1, input, System.out, factory);
+    TextPlayer player2 = new TextPlayer("B", b2, input, System.out, factory);
+    
+    App app = new App(player1, player2);
+    app.doPlacementPhase();
   }
 }
