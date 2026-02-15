@@ -86,4 +86,24 @@ public class BattleShipBoardTest {
     };
     checkWhatIsAtBoard(b, expected3);
   }
+
+
+  @Test
+public void test_tryAddShipCollision() {
+    BattleShipBoard<Character> b = new BattleShipBoard<Character>(10, 20);
+    V1ShipFactory factory = new V1ShipFactory();
+    Ship<Character> sub1 = factory.makeSubmarine(new Placement("A0V"));
+    assertTrue(b.tryAddShip(sub1));
+    Ship<Character> sub2 = factory.makeSubmarine(new Placement("A0V"));
+    assertFalse(b.tryAddShip(sub2));
+}
+
+
+  @Test
+public void test_tryAddShipOutOfBounds() {
+    BattleShipBoard<Character> b = new BattleShipBoard<Character>(10, 20);
+    V1ShipFactory factory = new V1ShipFactory();
+    Ship<Character> car = factory.makeCarrier(new Placement("P0V"));
+    assertFalse(b.tryAddShip(car));
+}
 }
