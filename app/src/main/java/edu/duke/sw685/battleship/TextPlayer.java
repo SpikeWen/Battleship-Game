@@ -41,9 +41,7 @@ public class TextPlayer {
     setupShipCreationList();
   }
 
-  /**
-   * Sets up the map from ship names to creation functions
-   */
+  //Sets up the map from ship names to creation functions
   protected void setupShipCreationMap() {
     shipCreationFns.put("Submarine", (p) -> shipFactory.makeSubmarine(p));
     shipCreationFns.put("Destroyer", (p) -> shipFactory.makeDestroyer(p));

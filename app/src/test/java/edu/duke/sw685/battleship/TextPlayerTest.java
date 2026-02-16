@@ -122,17 +122,12 @@ void test_countOccurrences() {
     assertEquals(2, countOccurrences("aaaa", "aa"));
 }
 
-/* 
-  @Test
-void test_countOccurrences() {
-    String str3 = "hello world";
-    assertEquals(0, countOccurrences(str3, "goodbye"));
-}*/
+
 
 @Test
   void test_read_placement_eof() {
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-    TextPlayer player = createTextPlayer(10, 20, "", bytes);  // Empty = EOF
+    TextPlayer player = createTextPlayer(10, 20, "", bytes);  
     
     assertThrows(EOFException.class, () -> player.readPlacement("Enter placement:"));
   }
