@@ -10,5 +10,7 @@ public interface Board<T> {
     public Ship<T> fireAt(Coordinate c);
     public T whatIsAtForSelf(Coordinate where);
     public T whatIsAtForEnemy(Coordinate where);
+    //to see if all ships on the board are sunk
+    public boolean allShipsSunk();
 }
 
