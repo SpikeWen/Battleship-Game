@@ -67,38 +67,7 @@ public class TextPlayerTest {
     player.doOnePlacement("Destroyer", player.shipCreationFns.get("Destroyer"));
     assertEquals(expected, bytes.toString());
   }
-/* 
-  @Test
-  void test_doPlacementPhase() throws IOException {
-    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-    String input = "A0V\n"+"A1V\n" +      // 2 submarines
-                   "a0V\n"+"a1V\n"+"a2V\n" + // 3 destroyers
-                   "a0V\n"+"a1V\n"+"a2V\n" + // 3 battleships
-                   "a0V\n"+"a1V\n";       // 2 carriers
-    
-    TextPlayer player = createTextPlayer(10, 20, input, bytes);
 
-    player.doPlacementPhase();
-    
-    String output = bytes.toString();
-    assertTrue(output.contains("  0|1|2|3|4|5|6|7|8|9"));
-    assertTrue(output.contains("Player A: you are going to place the following ships"));
-    assertTrue(output.contains("Player A where do you want to place a Submarine?"));
-    assertTrue(output.contains("Player A where do you want to place a Destroyer?"));
-    assertTrue(output.contains("Player A where do you want to place a Battleship?"));
-    assertTrue(output.contains("Player A where do you want to place a Carrier?"));
-    
-    // countOccurrences is a helper method to count how many times a substring appears in a string
-    int subCount = countOccurrences(output, "Player A where do you want to place a Submarine?");
-    assertEquals(2, subCount);
-    int dstCount = countOccurrences(output, "Player A where do you want to place a Destroyer?");
-    assertEquals(3, dstCount);
-    int batCount = countOccurrences(output, "Player A where do you want to place a Battleship?");
-    assertEquals(3, batCount);
-    int carCount = countOccurrences(output, "Player A where do you want to place a Carrier?");
-    assertEquals(2, carCount);
-  }
-*/
   // Helper method to count how many times a substring appears in a string
   private int countOccurrences(String str, String substr) {
     int count = 0;
@@ -184,4 +153,68 @@ void test_countOccurrences() {
     assertThrows(EOFException.class, 
                  () -> player.doOnePlacement("Destroyer", player.shipCreationFns.get("Destroyer")));
   }
+
+
+@Test
+void testReadCoordinate() throws IOException {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    TextPlayer player = createTextPlayer(10, 20, "B2\nC8\na4\n", bytes);
+    String prompt = "Enter a coordinate:";
+    Coordinate c1 = player.readCoordinate(prompt);
+    assertEquals(new Coordinate(1, 2), c1);
+    bytes.reset();
+    Coordinate c2 = player.readCoordinate(prompt);
+    assertEquals(new Coordinate(2, 8), c2);
+    bytes.reset();
+    Coordinate c3 = player.readCoordinate(prompt);
+    assertEquals(new Coordinate(0, 4), c3);
+}
+
+@Test
+void test_read_coordinate_eof() {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    TextPlayer player = createTextPlayer(10, 20, "", bytes);
+    
+    assertThrows(EOFException.class, () -> player.readCoordinate("Enter:"));
+}
+
+@Test
+void test_playOneTurn() throws IOException {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    Board<Character> enemyBoard = new BattleShipBoard<Character>(10, 20, 'X');
+    V1ShipFactory factory = new V1ShipFactory();
+    Ship<Character> enemyShip = factory.makeSubmarine(new Placement("A0V"));
+    enemyBoard.tryAddShip(enemyShip);
+    BoardTextView enemyView = new BoardTextView(enemyBoard);
+    TextPlayer player = createTextPlayer(10, 20, "A0\n", bytes);
+    player.playOneTurn(enemyBoard, enemyView, "B");
+    String output = bytes.toString();
+    assertTrue(output.contains("Player A where do you want to fire at?"));
+    assertTrue(output.contains("OMG! You hit a Submarine!"));
+}
+
+@Test
+void test_playOneTurn_miss() throws IOException {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    Board<Character> enemyBoard = new BattleShipBoard<Character>(10, 20, 'X');
+    BoardTextView enemyView = new BoardTextView(enemyBoard); 
+    //bro attacks miss
+    TextPlayer player = createTextPlayer(10, 20, "A5\n", bytes);
+    player.playOneTurn(enemyBoard, enemyView, "B");
+    String output = bytes.toString();
+    assertTrue(output.contains("Bro! You missed!"));
+}
+
+@Test
+void test_playOneTurn_invalid_then_valid() throws IOException {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        Board<Character> enemyBoard = new BattleShipBoard<Character>(10, 20, 'X');
+    BoardTextView enemyView = new BoardTextView(enemyBoard);
+    TextPlayer player = createTextPlayer(10, 20, "ZZ\nA5\n", bytes);
+    player.playOneTurn(enemyBoard, enemyView, "B");
+    String output = bytes.toString();
+    assertTrue(output.contains("That coordinate is invalid"));
+    assertTrue(output.contains("Bro! You missed!"));
+}
+
 }

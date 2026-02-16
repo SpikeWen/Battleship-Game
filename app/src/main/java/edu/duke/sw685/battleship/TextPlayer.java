@@ -40,6 +40,43 @@ public class TextPlayer {
     setupShipCreationMap();
     setupShipCreationList();
   }
+//read a coordinate from the user, with the given prompt
+  public Coordinate readCoordinate(String prompt) throws IOException {
+    out.println(prompt);
+    String s = inputReader.readLine();
+    if (s == null) {
+        throw new EOFException("End of input reached");
+    }
+    return new Coordinate(s);
+}
+
+public void playOneTurn(Board<Character> enemyBoard, BoardTextView enemyView, String enemyName) throws IOException {
+    out.print(view.displayMyBoardWithEnemyNextToIt(enemyView, "Your ocean", "Player " + enemyName + "'s ocean"));
+    out.println(); 
+    // Get attack coordinate with error handling
+    Coordinate attackCoord = null;
+    while (attackCoord == null) {
+        try {
+            attackCoord = readCoordinate("Player " + name + " where do you want to fire at?");
+            if (attackCoord.getRow() < 0 || attackCoord.getRow() >= enemyBoard.getHeight() ||
+                attackCoord.getColumn() < 0 || attackCoord.getColumn() >= enemyBoard.getWidth()) {
+                out.println("That coordinate is invalid: it does not have the correct format.");
+                attackCoord = null;
+            }
+        } catch (IllegalArgumentException e) {
+            out.println("That coordinate is invalid: it does not have the correct format.");
+            attackCoord = null;
+        }
+    }
+    Ship<Character> hitShip = enemyBoard.fireAt(attackCoord);
+    // Report result
+    if (hitShip == null) {
+        out.println("Bro! You missed!");
+    } else {
+        out.println("OMG! You hit a " + hitShip.getName() + "!");
+    }
+}
+
 
   //Sets up the map from ship names to creation functions
   protected void setupShipCreationMap() {
