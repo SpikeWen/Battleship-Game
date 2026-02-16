@@ -16,11 +16,12 @@ public class V1ShipFactoryTest {
    */
   private void checkShip(Ship<Character> testShip, String expectedName,
                          char expectedLetter, Coordinate... expectedLocs) {
+    // Check name
     assertEquals(expectedName, testShip.getName());
-    // Check that ship occupies expected coordinates
     for (Coordinate c : expectedLocs) {
       assertTrue(testShip.occupiesCoordinates(c));
-      assertEquals(expectedLetter, testShip.getDisplayInfoAt(c));
+      // 'true'  for self view
+      assertEquals(expectedLetter, testShip.getDisplayInfoAt(c, true));
     }
     assertFalse(testShip.occupiesCoordinates(new Coordinate(10, 10)));
   }
@@ -28,15 +29,11 @@ public class V1ShipFactoryTest {
   @Test
   public void test_makeSubmarine() {
     V1ShipFactory f = new V1ShipFactory();
-    
-    // Vertical submarine at (1, 2)
     Placement v1_2 = new Placement(new Coordinate(1, 2), 'V');
     Ship<Character> sub = f.makeSubmarine(v1_2);
     checkShip(sub, "Submarine", 's', 
               new Coordinate(1, 2), 
               new Coordinate(2, 2));
-    
-    // Horizontal submarine at (0, 0)
     Placement h0_0 = new Placement(new Coordinate(0, 0), 'H');
     Ship<Character> subH = f.makeSubmarine(h0_0);
     checkShip(subH, "Submarine", 's',
@@ -47,16 +44,12 @@ public class V1ShipFactoryTest {
   @Test
   public void test_makeDestroyer() {
     V1ShipFactory f = new V1ShipFactory();
-    
-    // Vertical destroyer at (1, 2)
     Placement v1_2 = new Placement(new Coordinate(1, 2), 'V');
     Ship<Character> dst = f.makeDestroyer(v1_2);
     checkShip(dst, "Destroyer", 'd', 
               new Coordinate(1, 2), 
               new Coordinate(2, 2), 
               new Coordinate(3, 2));
-    
-    // Horizontal destroyer at (5, 5)
     Placement h5_5 = new Placement(new Coordinate(5, 5), 'H');
     Ship<Character> dstH = f.makeDestroyer(h5_5);
     checkShip(dstH, "Destroyer", 'd',
@@ -68,8 +61,6 @@ public class V1ShipFactoryTest {
   @Test
   public void test_makeBattleship() {
     V1ShipFactory f = new V1ShipFactory();
-    
-    // Vertical battleship at (0, 0)
     Placement v0_0 = new Placement(new Coordinate(0, 0), 'V');
     Ship<Character> bat = f.makeBattleship(v0_0);
     checkShip(bat, "Battleship", 'b',
@@ -77,8 +68,7 @@ public class V1ShipFactoryTest {
               new Coordinate(1, 0),
               new Coordinate(2, 0),
               new Coordinate(3, 0));
-    
-    // Horizontal battleship at (2, 3)
+
     Placement h2_3 = new Placement(new Coordinate(2, 3), 'H');
     Ship<Character> batH = f.makeBattleship(h2_3);
     checkShip(batH, "Battleship", 'b',
@@ -91,8 +81,6 @@ public class V1ShipFactoryTest {
   @Test
   public void test_makeCarrier() {
     V1ShipFactory f = new V1ShipFactory();
-    
-    // Vertical carrier at (3, 4)
     Placement v3_4 = new Placement(new Coordinate(3, 4), 'V');
     Ship<Character> car = f.makeCarrier(v3_4);
     checkShip(car, "Carrier", 'c',
@@ -103,7 +91,6 @@ public class V1ShipFactoryTest {
               new Coordinate(7, 4),
               new Coordinate(8, 4));
     
-    // Horizontal carrier at (1, 1)
     Placement h1_1 = new Placement(new Coordinate(1, 1), 'H');
     Ship<Character> carH = f.makeCarrier(h1_1);
     checkShip(carH, "Carrier", 'c',

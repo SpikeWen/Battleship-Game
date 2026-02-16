@@ -1,5 +1,5 @@
 package edu.duke.sw685.battleship;
-
+import java.util.function.Function;
 /**
  * This class handles textual display of
  * a Board (i.e., converting it to a string to show
@@ -9,11 +9,7 @@ package edu.duke.sw685.battleship;
  * enemy's board.
  */
 public class BoardTextView {
-  /**
-   * The Board to display
-   */
   private final Board<Character> toDisplay;
-
   /**
    * Constructs a BoardView, given the board it will display.
    * 
@@ -29,11 +25,10 @@ public class BoardTextView {
   }
 
   /**
-   * This makes the header line, e.g. 0|1|2|3|4\n
-   * 
+   * For numer header line, like 0|1|2|3|4\n
    * @return the String that is the header line for the given board
    */
-  String makeHeader() {
+  protected String makeHeader() {
     StringBuilder ans = new StringBuilder("  "); // README shows two spaces at start
     String sep = ""; // start with nothing to separate, then switch to | to separate
     for (int i = 0; i < toDisplay.getWidth(); i++) {
@@ -45,38 +40,38 @@ public class BoardTextView {
     return ans.toString();
   }
 
-  /**
-   * Display the board for the player's own view (shows all ships)
-   * 
-   * @return the String representation of the board
-   */
-  public String displayMyOwnBoard() {
+  protected String displayAnyBoard(Function<Coordinate, Character> getSquareFn) {
     StringBuilder ans = new StringBuilder();
     ans.append(makeHeader());
-    
     for (int row = 0; row < toDisplay.getHeight(); row++) {
       char rowLetter = (char) ('A' + row);
       ans.append(rowLetter);
       ans.append(" ");
-      String sep = ""; // start with nothing to separate, then switch to | to separate
       for (int col = 0; col < toDisplay.getWidth(); col++) {
-        ans.append(sep);
+        if (col > 0) {
+          ans.append("|");
+        }
         Coordinate c = new Coordinate(row, col);
-        Character displayChar = toDisplay.whatIsAt(c);  // show ship character 
-          if (displayChar == null) {
-              ans.append(" ");
-          } else {
-              ans.append(displayChar); 
-          }
-        sep = "|";
+        Character displayChar = getSquareFn.apply(c);
+        if (displayChar == null) {
+          ans.append(" ");
+        } else {
+          ans.append(displayChar);
+        }
       }
-      
       ans.append(" ");
       ans.append(rowLetter);
       ans.append("\n");
     }
-    
     ans.append(makeHeader());
     return ans.toString();
+  }
+
+  public String displayMyOwnBoard() {
+    return displayAnyBoard((c) -> toDisplay.whatIsAtForSelf(c));
+  }
+
+  public String displayEnemyBoard() {
+    return displayAnyBoard((c) -> toDisplay.whatIsAtForEnemy(c));
   }
 }

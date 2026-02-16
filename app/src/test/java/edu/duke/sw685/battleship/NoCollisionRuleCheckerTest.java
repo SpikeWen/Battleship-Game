@@ -10,7 +10,7 @@ public class NoCollisionRuleCheckerTest {
   public void test_no_collision() {
     NoCollisionRuleChecker<Character> checker = new NoCollisionRuleChecker<>(null);
     V1ShipFactory factory = new V1ShipFactory();
-    Board<Character> board = new BattleShipBoard<Character>(10, 20, checker);
+    Board<Character> board = new BattleShipBoard<Character>(10, 20, checker, 'X');
     Ship<Character> sub1 = factory.makeSubmarine(new Placement("A0V"));
     board.tryAddShip(sub1);
     Ship<Character> dst1 = factory.makeDestroyer(new Placement("C3H"));
@@ -22,7 +22,7 @@ public class NoCollisionRuleCheckerTest {
   public void test_collision() {
     NoCollisionRuleChecker<Character> checker = new NoCollisionRuleChecker<>(null);
     V1ShipFactory factory = new V1ShipFactory();
-    Board<Character> board = new BattleShipBoard<Character>(10, 20, checker);
+    Board<Character> board = new BattleShipBoard<Character>(10, 20, checker, 'X');
     Ship<Character> dst1 = factory.makeDestroyer(new Placement("A0H"));
     board.tryAddShip(dst1);
 
@@ -43,7 +43,7 @@ public class NoCollisionRuleCheckerTest {
     InBoundsRuleChecker<Character> inBounds = new InBoundsRuleChecker<>(null);
     NoCollisionRuleChecker<Character> noCollision = new NoCollisionRuleChecker<>(inBounds);
     V1ShipFactory factory = new V1ShipFactory();
-    Board<Character> board = new BattleShipBoard<Character>(10, 20, noCollision);
+    Board<Character> board = new BattleShipBoard<Character>(10, 20, noCollision, 'X');
     Ship<Character> sub1 = factory.makeSubmarine(new Placement("A0V"));
     board.tryAddShip(sub1);
     Ship<Character> dst1 = factory.makeDestroyer(new Placement("C3V"));
@@ -58,7 +58,7 @@ public class NoCollisionRuleCheckerTest {
     NoCollisionRuleChecker<Character> noCollision = new NoCollisionRuleChecker<>(inBounds);
     
     V1ShipFactory factory = new V1ShipFactory();
-    Board<Character> board = new BattleShipBoard<Character>(10, 20, noCollision);
+    Board<Character> board = new BattleShipBoard<Character>(10, 20, noCollision, 'X');
 
 
     Ship<Character> sub1 = factory.makeSubmarine(new Placement("A0V"));

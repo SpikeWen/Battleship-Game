@@ -10,7 +10,7 @@ public class BoardTextViewTest {
    * Helper method to test empty boards with different sizes
    */
   private void emptyBoardHelper(int w, int h, String expectedHeader, String expectedBody) {
-    Board<Character> b1 = new BattleShipBoard<Character>(w, h);
+    Board<Character> b1 = new BattleShipBoard<Character>(w, h, 'X');  
     BoardTextView view = new BoardTextView(b1);
     assertEquals(expectedHeader, view.makeHeader());
     String expected = expectedHeader + expectedBody + expectedHeader;
@@ -49,16 +49,16 @@ public class BoardTextViewTest {
 
   @Test
   public void test_invalid_board_size() {
-    Board<Character> wideBoard = new BattleShipBoard<Character>(11, 20);
-    Board<Character> tallBoard = new BattleShipBoard<Character>(10, 27);
+    Board<Character> wideBoard = new BattleShipBoard<Character>(11, 20, 'X'); 
+    Board<Character> tallBoard = new BattleShipBoard<Character>(10, 27, 'X'); 
     assertThrows(IllegalArgumentException.class, () -> new BoardTextView(wideBoard));
     assertThrows(IllegalArgumentException.class, () -> new BoardTextView(tallBoard));
   }
 
-//tests after adding some ships
-@Test
-public void test_display_board_with_multiple_ships() {
-    Board<Character> b = new BattleShipBoard<Character>(3, 3);
+  //tests after adding some ships
+  @Test
+  public void test_display_board_with_multiple_ships() {
+    Board<Character> b = new BattleShipBoard<Character>(3, 3, 'X'); 
     BoardTextView view = new BoardTextView(b);
     
     // Add ships at all positions
@@ -76,6 +76,33 @@ public void test_display_board_with_multiple_ships() {
         "C s| |s C\n" +
         expectedHeader;
     assertEquals(expected, view.displayMyOwnBoard());
-}
+  }
 
+  @Test
+  public void test_display_enemy_board() {
+    Board<Character> b = new BattleShipBoard<Character>(4, 3, 'X');
+    BoardTextView view = new BoardTextView(b);
+    V1ShipFactory factory = new V1ShipFactory();
+    Ship<Character> dst = factory.makeDestroyer(new Placement("A3V"));
+    Ship<Character> sub = factory.makeSubmarine(new Placement("B0V"));
+    b.tryAddShip(dst);
+    b.tryAddShip(sub);
+    String myView =
+        "  0|1|2|3\n" +
+        "A  | | |d A\n" +
+        "B s| | |d B\n" +  
+        "C s| | |d C\n" +
+        "  0|1|2|3\n";
+    assertEquals(myView, view.displayMyOwnBoard());
+    b.fireAt(new Coordinate(0, 3));  // Hit destroyer
+    b.fireAt(new Coordinate(1, 0));  // Hit submarine  
+    b.fireAt(new Coordinate(2, 2));  // Miss
+    String enemyView =
+        "  0|1|2|3\n" +
+        "A  | | |d A\n" +
+        "B s| | |  B\n" +
+        "C  | |X|  C\n" +
+        "  0|1|2|3\n";
+    assertEquals(enemyView, view.displayEnemyBoard());
+  }
 }

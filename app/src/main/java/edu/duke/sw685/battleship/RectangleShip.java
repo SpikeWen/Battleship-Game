@@ -34,8 +34,8 @@ public class RectangleShip<T> extends BasicShip<T> {
    * @param myDisplayInfo is the display information
    */
   public RectangleShip(String name, Coordinate upperLeft, int width, int height, 
-                       ShipDisplayInfo<T> myDisplayInfo) {
-    super(makeCoords(upperLeft, width, height), myDisplayInfo);
+                       ShipDisplayInfo<T> myDisplayInfo, ShipDisplayInfo<T> enemyDisplayInfo) {
+    super(makeCoords(upperLeft, width, height), myDisplayInfo, enemyDisplayInfo);
     this.name = name;
   }
 
@@ -51,7 +51,7 @@ public class RectangleShip<T> extends BasicShip<T> {
    */
   public RectangleShip(String name, Coordinate upperLeft, int width, int height, 
                        T data, T onHit) {
-    this(name, upperLeft, width, height, new SimpleShipDisplayInfo<T>(data, onHit));
+    this(name, upperLeft, width, height, new SimpleShipDisplayInfo<T>(data, onHit),new SimpleShipDisplayInfo<T>(null, data));
   }
 
   /**
@@ -62,10 +62,14 @@ public class RectangleShip<T> extends BasicShip<T> {
    * @param data is the character to display when not hit
    * @param onHit is the character to display when hit
    */
+  /* 
+  public RectangleShip( Coordinate upperLeft, T data, T onHit) {
+    this("testship", upperLeft, 1, 1, data, onHit);
+  }*/
+
   public RectangleShip(String name, Coordinate upperLeft, T data, T onHit) {
     this(name, upperLeft, 1, 1, data, onHit);
-  }
-
+}
   /**
    * Get the name of this ship
    * 

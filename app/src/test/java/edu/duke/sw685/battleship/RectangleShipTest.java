@@ -74,7 +74,7 @@ public class RectangleShipTest {
     assertFalse(ship.occupiesCoordinates(new Coordinate(6, 5)));
   }
 
-    @Test
+  @Test
   public void test_isSunk() {
     RectangleShip<Character> ship = new RectangleShip<Character>("testship",
                                                                    new Coordinate(1, 2),
@@ -104,7 +104,7 @@ public class RectangleShipTest {
     assertTrue(ship.wasHitAt(new Coordinate(1, 0)));
   }
 
-    @Test
+  @Test
   public void test_invalid_coordinate() {
     RectangleShip<Character> ship = new RectangleShip<Character>("testship",
                                                                    new Coordinate(1, 1),
@@ -115,21 +115,40 @@ public class RectangleShipTest {
     assertThrows(IllegalArgumentException.class, 
                  () -> ship.wasHitAt(new Coordinate(5, 5)));
   }
+
   @Test
   public void test_getDisplayInfoAt() {
     RectangleShip<Character> ship = new RectangleShip<Character>("testship",
                                                                    new Coordinate(0, 0),
                                                                    1, 2, 's', '*');
     
-
-    assertEquals('s', ship.getDisplayInfoAt(new Coordinate(0, 0)));
+    // Test MY view (isSelf means true)
+    assertEquals('s', ship.getDisplayInfoAt(new Coordinate(0, 0), true));
+    assertEquals('s', ship.getDisplayInfoAt(new Coordinate(1, 0), true));
     ship.recordHitAt(new Coordinate(0, 0));
-    assertEquals('*', ship.getDisplayInfoAt(new Coordinate(0, 0)));
-
-    assertThrows(IllegalArgumentException.class,() -> ship.getDisplayInfoAt(new Coordinate(5, 5)));
+    // Hit show '*'
+    assertEquals('*', ship.getDisplayInfoAt(new Coordinate(0, 0), true));
+    // Unhit shows 's'
+    assertEquals('s', ship.getDisplayInfoAt(new Coordinate(1, 0), true));
+    
+    // Test ENEMY view (isSelf means false)
+    // Hit show 's' 
+    assertEquals('s', ship.getDisplayInfoAt(new Coordinate(0, 0), false));
+    // Unhit show null
+    assertEquals(null, ship.getDisplayInfoAt(new Coordinate(1, 0), false));
+    ship.recordHitAt(new Coordinate(1, 0));
+    // Now both are hit, enemy sees 's' for both
+    assertEquals('s', ship.getDisplayInfoAt(new Coordinate(0, 0), false));
+    assertEquals('s', ship.getDisplayInfoAt(new Coordinate(1, 0), false));
+    // Some Invalid coordinate
+    assertThrows(IllegalArgumentException.class,
+                 () -> ship.getDisplayInfoAt(new Coordinate(5, 5), true));
+    assertThrows(IllegalArgumentException.class,
+                 () -> ship.getDisplayInfoAt(new Coordinate(5, 5), false));
   }
-@Test
-public void test_getCoordinates() {
+
+  @Test
+  public void test_getCoordinates() {
     RectangleShip<Character> ship = new RectangleShip<Character>("testship",
                                                                    new Coordinate(1, 2),
                                                                    1, 3, 's', '*');
@@ -144,5 +163,5 @@ public void test_getCoordinates() {
         actual.add(c);
     }
     assertEquals(expected, actual);
-}
+  }
 }
