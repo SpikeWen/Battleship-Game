@@ -1,21 +1,13 @@
 package edu.duke.sw685.battleship;
+
 import java.util.function.Function;
+
 /**
- * This class handles textual display of
- * a Board (i.e., converting it to a string to show
- * to the user).
- * It supports two ways to display the Board:
- * one for the player's own board, and one for the 
- * enemy's board.
+ * This class handles textual display of a Board
  */
 public class BoardTextView {
   private final Board<Character> toDisplay;
-  /**
-   * Constructs a BoardView, given the board it will display.
-   * 
-   * @param toDisplay is the Board to display
-   * @throws IllegalArgumentException if the board is larger than 10x26.  
-   */
+
   public BoardTextView(Board<Character> toDisplay) {
     this.toDisplay = toDisplay;
     if (toDisplay.getWidth() > 10 || toDisplay.getHeight() > 26) {
@@ -24,13 +16,9 @@ public class BoardTextView {
     }
   }
 
-  /**
-   * For numer header line, like 0|1|2|3|4\n
-   * @return the String that is the header line for the given board
-   */
   protected String makeHeader() {
-    StringBuilder ans = new StringBuilder("  "); // README shows two spaces at start
-    String sep = ""; // start with nothing to separate, then switch to | to separate
+    StringBuilder ans = new StringBuilder("  ");
+    String sep = "";
     for (int i = 0; i < toDisplay.getWidth(); i++) {
       ans.append(sep);
       ans.append(i);
@@ -43,10 +31,12 @@ public class BoardTextView {
   protected String displayAnyBoard(Function<Coordinate, Character> getSquareFn) {
     StringBuilder ans = new StringBuilder();
     ans.append(makeHeader());
+
     for (int row = 0; row < toDisplay.getHeight(); row++) {
       char rowLetter = (char) ('A' + row);
       ans.append(rowLetter);
       ans.append(" ");
+
       for (int col = 0; col < toDisplay.getWidth(); col++) {
         if (col > 0) {
           ans.append("|");
@@ -59,10 +49,12 @@ public class BoardTextView {
           ans.append(displayChar);
         }
       }
+
       ans.append(" ");
       ans.append(rowLetter);
       ans.append("\n");
     }
+
     ans.append(makeHeader());
     return ans.toString();
   }
@@ -73,5 +65,47 @@ public class BoardTextView {
 
   public String displayEnemyBoard() {
     return displayAnyBoard((c) -> toDisplay.whatIsAtForEnemy(c));
+  }
+
+  /**
+   * Display this board's "my own board" on the left and enemy's board on the right
+   * 
+   * @param enemyView is the enemy's board view
+   * @param myHeader is the header for my board
+   * @param enemyHeader is the header for enemy's board
+   * @return a string with both boards side by side
+   */
+public String displayMyBoardWithEnemyNextToIt(BoardTextView enemyView, String myHeader, String enemyHeader) {
+    StringBuilder result = new StringBuilder();
+    String myBoard = displayMyOwnBoard();
+    String enemyBoard = enemyView.displayEnemyBoard();
+    // Get lines from mine and enemy's
+    String[] myLines = myBoard.split("\n");
+    String[] enemyLines = enemyBoard.split("\n");
+    // Have proper column positions
+    int width = toDisplay.getWidth();
+    int myHeaderCol = 5;
+    int enemyHeaderCol = 2 * width + 22; 
+    //for header
+    result.append(makeSpaces(myHeaderCol)).append(myHeader);  
+    result.append(makeSpaces(enemyHeaderCol)).append(enemyHeader).append("\n");
+    // board side by side
+    int enemyBoardCol = 2 * width + 19; 
+    for (int i = 0; i < myLines.length; i++) {
+      result.append(myLines[i]);
+      result.append(makeSpaces(enemyBoardCol - myLines[i].length()));
+      result.append(enemyLines[i]);
+      result.append("\n");
+    }
+    
+    return result.toString();
+}
+ //helper to make some spaces
+  private String makeSpaces(int count) {
+    StringBuilder spaces = new StringBuilder();
+    for (int i = 0; i < count; i++) {
+      spaces.append(" ");
+    }
+    return spaces.toString();
   }
 }

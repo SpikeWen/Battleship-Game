@@ -105,4 +105,65 @@ public class BoardTextViewTest {
         "  0|1|2|3\n";
     assertEquals(enemyView, view.displayEnemyBoard());
   }
+
+@Test
+public void test_display_my_board_with_enemy_next_to_it() {
+    Board<Character> myBoard = new BattleShipBoard<Character>(4, 3, 'X');
+    Board<Character> enemyBoard = new BattleShipBoard<Character>(4, 3, 'X');
+    BoardTextView myView = new BoardTextView(myBoard);
+    BoardTextView enemyView = new BoardTextView(enemyBoard);
+    V1ShipFactory factory = new V1ShipFactory();
+    Ship<Character> mySub = factory.makeSubmarine(new Placement("A0V")); 
+    Ship<Character> mySub2 = factory.makeSubmarine(new Placement("A2H"));  
+    myBoard.tryAddShip(mySub);
+    myBoard.tryAddShip(mySub2);
+    Ship<Character> enemySub = factory.makeSubmarine(new Placement("A1V")); 
+    enemyBoard.tryAddShip(enemySub);
+    //Attack!
+    enemyBoard.fireAt(new Coordinate(0, 1)); 
+    enemyBoard.fireAt(new Coordinate(2, 0)); 
+    
+    String expected = 
+        "     Your ocean                              Enemy's ocean\n" +
+        "  0|1|2|3                    0|1|2|3\n" +
+        "A s| |s|s A                A  |s| |  A\n" +
+        "B s| | |  B                B  | | |  B\n" +
+        "C  | | |  C                C X| | |  C\n" +
+        "  0|1|2|3                    0|1|2|3\n";
+    
+    String actual = myView.displayMyBoardWithEnemyNextToIt(enemyView, "Your ocean", "Enemy's ocean");
+    assertEquals(expected, actual);
+}
+/* 
+@Test
+public void test_display_side_by_side_empty_boards() {
+    Board<Character> myBoard = new BattleShipBoard<Character>(2, 2, 'X');
+    Board<Character> enemyBoard = new BattleShipBoard<Character>(2, 2, 'X');
+    BoardTextView myView = new BoardTextView(myBoard);
+    BoardTextView enemyView = new BoardTextView(enemyBoard);
+    String expected = 
+        "     Player A               Player B\n" +
+        "  0|1            0|1\n" +
+        "A  |  A        A  |  A\n" +
+        "B  |  B        B  |  B\n" +
+        "  0|1            0|1\n";
+    
+    String actual = myView.displayMyBoardWithEnemyNextToIt(enemyView, "Player A", "Player B");
+    assertEquals(expected, actual);
+}*/
+
+@Test
+public void test_display_side_by_side_different_sizes() {
+    // Test with different board sizes (5x5)
+    Board<Character> myBoard = new BattleShipBoard<Character>(5, 5, 'X');
+    Board<Character> enemyBoard = new BattleShipBoard<Character>(5, 5, 'X');
+    BoardTextView myView = new BoardTextView(myBoard);
+    BoardTextView enemyView = new BoardTextView(enemyBoard);
+    String result = myView.displayMyBoardWithEnemyNextToIt(enemyView, "Player A", "Player B");
+    assertTrue(result.contains("Player A"));
+    assertTrue(result.contains("Player B"));
+    String[] lines = result.split("\n");
+    assertEquals(8, lines.length);
+}
+
 }
