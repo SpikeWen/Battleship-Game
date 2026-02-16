@@ -46,64 +46,43 @@ public class BattleShipBoardTest {
     checkWhatIsAtBoard(b, expected);
   }
 
-  @Test
-  public void test_tryAddShip() {
+@Test
+public void test_tryAddShip() {
     BattleShipBoard<Character> b = new BattleShipBoard<Character>(3, 3);
-    
-    // Add a ship at (1, 1)
-    Coordinate c1 = new Coordinate(1, 1);
-    Ship<Character> s1 = new RectangleShip<Character>("testship", c1, 's', '*');
-    assertTrue(b.tryAddShip(s1));
-    
-    Character[][] expected1 = {
-      {null, null, null},
-      {null, 's', null},
-      {null, null, null}
-    };
-    checkWhatIsAtBoard(b, expected1);
-    
-    // Add another ship at (0, 2)
-    Coordinate c2 = new Coordinate(0, 2);
-    Ship<Character> s2 = new RectangleShip<Character>("testship2", c2, 's', '*');
-    assertTrue(b.tryAddShip(s2));
-    
-    Character[][] expected2 = {
-      {null, null, 's'},
-      {null, 's', null},
-      {null, null, null}
-    };
-    checkWhatIsAtBoard(b, expected2);
-    
-    // Add a third ship at (2, 0)
-    Coordinate c3 = new Coordinate(2, 0);
-    Ship<Character> s3 = new RectangleShip<Character>("testship3", c3, 's', '*');
-    assertTrue(b.tryAddShip(s3));
-    
-    Character[][] expected3 = {
-      {null, null, 's'},
-      {null, 's', null},
-      {'s', null, null}
-    };
-    checkWhatIsAtBoard(b, expected3);
-  }
+    V1ShipFactory factory = new V1ShipFactory();
+    Ship<Character> sub1 = factory.makeSubmarine(new Placement("A0V"));
+    assertNull(b.tryAddShip(sub1));  // null means success
+    Ship<Character> sub2 = factory.makeSubmarine(new Placement("A0V"));
+    String result = b.tryAddShip(sub2);
+    assertNotNull(result);  // should return error message
+    assertEquals("That placement is invalid: the ship overlaps another ship.", result);
+}
 
-
-  @Test
+@Test
 public void test_tryAddShipCollision() {
     BattleShipBoard<Character> b = new BattleShipBoard<Character>(10, 20);
     V1ShipFactory factory = new V1ShipFactory();
     Ship<Character> sub1 = factory.makeSubmarine(new Placement("A0V"));
-    assertTrue(b.tryAddShip(sub1));
+    assertNull(b.tryAddShip(sub1));
     Ship<Character> sub2 = factory.makeSubmarine(new Placement("A0V"));
-    assertFalse(b.tryAddShip(sub2));
+    String result = b.tryAddShip(sub2);
+    assertEquals("That placement is invalid: the ship overlaps another ship.", result);
 }
 
-
-  @Test
+@Test
 public void test_tryAddShipOutOfBounds() {
     BattleShipBoard<Character> b = new BattleShipBoard<Character>(10, 20);
     V1ShipFactory factory = new V1ShipFactory();
+    
     Ship<Character> car = factory.makeCarrier(new Placement("P0V"));
-    assertFalse(b.tryAddShip(car));
+    String result = b.tryAddShip(car);
+    assertEquals("That placement is invalid: the ship goes off the bottom of the board.", result);
+}
+
+@Test
+public void test_tryAddShipValid() {
+    BattleShipBoard<Character> b = new BattleShipBoard<Character>(10, 20);
+    V1ShipFactory factory = new V1ShipFactory();
+    assertNull(b.tryAddShip(factory.makeSubmarine(new Placement("A0V"))));
 }
 }

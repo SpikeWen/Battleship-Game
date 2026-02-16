@@ -40,13 +40,15 @@ public class BattleShipBoard<T> implements Board<T> {
         return height;
     }
 
-    public boolean tryAddShip(Ship<T> toAdd) {
-        if (placementChecker.checkPlacement(toAdd, this)) {
-              myShips.add(toAdd);
-            return true;
+    public String tryAddShip(Ship<T> toAdd) {
+        String result = placementChecker.checkPlacement(toAdd, this);
+        if (result != null) {
+            return result;
         }
+        myShips.add(toAdd);
+        return null;
 
-    return false;
+  
   }
   
     public T whatIsAt(Coordinate where) {

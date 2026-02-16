@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.EOFException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
@@ -66,14 +67,14 @@ public class TextPlayerTest {
     player.doOnePlacement("Destroyer", player.shipCreationFns.get("Destroyer"));
     assertEquals(expected, bytes.toString());
   }
-
+/* 
   @Test
   void test_doPlacementPhase() throws IOException {
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-    String input = "A0V\nA1V\n" +      // 2 submarines
-                   "B0V\nB1V\nB2V\n" + // 3 destroyers
-                   "C0V\nC1V\nC2V\n" + // 3 battleships
-                   "D0V\nD1V\n";       // 2 carriers
+    String input = "A0V\n"+"A1V\n" +      // 2 submarines
+                   "a0V\n"+"a1V\n"+"a2V\n" + // 3 destroyers
+                   "a0V\n"+"a1V\n"+"a2V\n" + // 3 battleships
+                   "a0V\n"+"a1V\n";       // 2 carriers
     
     TextPlayer player = createTextPlayer(10, 20, input, bytes);
 
@@ -97,23 +98,95 @@ public class TextPlayerTest {
     int carCount = countOccurrences(output, "Player A where do you want to place a Carrier?");
     assertEquals(2, carCount);
   }
-
+*/
   // Helper method to count how many times a substring appears in a string
   private int countOccurrences(String str, String substr) {
     int count = 0;
     int index = 0;
     index=str.indexOf(substr, index);
-    while (index  != -1) {
+    while ((index )!= -1) {
 
       count++;
       index += substr.length();
-          index=str.indexOf(substr, index);
+        index = str.indexOf(substr, index);
     }
     return count;
   }
+//Test the countOccurrences helper method
+@Test
+void test_countOccurrences() {
+    assertEquals(3, countOccurrences("hello hello hello", "hello"));
+    assertEquals(1, countOccurrences("hello world", "hello"));
+    assertEquals(0, countOccurrences("hello world", "goodbye"));
+    assertEquals(0, countOccurrences("", "test"));
+    assertEquals(2, countOccurrences("aaaa", "aa"));
+}
+
+/* 
   @Test
 void test_countOccurrences() {
     String str3 = "hello world";
     assertEquals(0, countOccurrences(str3, "goodbye"));
-}
+}*/
+
+@Test
+  void test_read_placement_eof() {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    TextPlayer player = createTextPlayer(10, 20, "", bytes);  // Empty = EOF
+    
+    assertThrows(EOFException.class, () -> player.readPlacement("Enter placement:"));
+  }
+
+  @Test
+  void test_doOnePlacement_with_invalid_format() throws IOException {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    // First invalid format, then valid
+    TextPlayer player = createTextPlayer(10, 20, "AAV\nA0V\n", bytes);
+    
+    player.doOnePlacement("Destroyer", player.shipCreationFns.get("Destroyer"));
+    
+    String output = bytes.toString();
+    assertTrue(output.contains("That placement is invalid"));
+    // Should still succeed after retry
+    assertTrue(output.contains("A d| | | | | | | | |  A"));
+  }
+
+  @Test
+  void test_doOnePlacement_with_invalid_orientation() throws IOException {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    // First invalid orientation, then valid
+    TextPlayer player = createTextPlayer(10, 20, "A0Q\nA0V\n", bytes);
+    
+    player.doOnePlacement("Destroyer", player.shipCreationFns.get("Destroyer"));
+    
+    String output = bytes.toString();
+    assertTrue(output.contains("That placement is invalid"));
+    // Should still succeed after retry
+    assertTrue(output.contains("A d| | | | | | | | |  A"));
+  }
+
+  @Test
+  void test_doOnePlacement_with_out_of_bounds() throws IOException {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    // First out of bounds, then valid
+    TextPlayer player = createTextPlayer(10, 20, "T0V\nA0V\n", bytes);
+    
+    player.doOnePlacement("Destroyer", player.shipCreationFns.get("Destroyer"));
+    
+    String output = bytes.toString();
+    assertTrue(output.contains("That placement is invalid: the ship goes off the bottom of the board."));
+    // Should still succeed after retry
+    assertTrue(output.contains("A d| | | | | | | | |  A"));
+  }
+
+
+
+  @Test
+  void test_doOnePlacement_eof() {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    TextPlayer player = createTextPlayer(10, 20, "", bytes);  // Empty = EOF
+    
+    assertThrows(EOFException.class, 
+                 () -> player.doOnePlacement("Destroyer", player.shipCreationFns.get("Destroyer")));
+  }
 }

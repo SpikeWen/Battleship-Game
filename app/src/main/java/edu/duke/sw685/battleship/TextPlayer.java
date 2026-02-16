@@ -2,6 +2,7 @@ package edu.duke.sw685.battleship;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.EOFException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,23 +69,36 @@ public class TextPlayer {
   public Placement readPlacement(String prompt) throws IOException {
     out.println(prompt);
     String s = inputReader.readLine();
+    if(s==null){
+      throw new EOFException("End of input reached");
+    }
     return new Placement(s);
   }
 
   /**
    * Does one placement: reads a placement, creates a ship, adds it to the board,
    * and displays the board
-   * 
    * @param shipName is the name of the ship to place
    * @param createFn is the function to create the ship
    * @throws IOException if there is an error reading input
    */
-  public void doOnePlacement(String shipName, Function<Placement, Ship<Character>> createFn) throws IOException {
-    Placement p = readPlacement("Player " + name + " where do you want to place a " + shipName + "?");
-    Ship<Character> s = createFn.apply(p);
-    theBoard.tryAddShip(s);
-    out.print(view.displayMyOwnBoard());
-  }
+public void doOnePlacement(String shipName, Function<Placement, Ship<Character>> createFn) throws IOException {
+    while (true) {
+        try {
+            Placement p = readPlacement("Player " + name + " where do you want to place a " + shipName + "?");
+            Ship<Character> s = createFn.apply(p);
+            String result = theBoard.tryAddShip(s);
+            if (result == null) {
+                out.print(view.displayMyOwnBoard());
+                return;
+            } else {
+                out.println(result);
+            }
+        } catch (IllegalArgumentException e) {
+            out.println("That placement is invalid: " + e.getMessage());
+        }
+    }
+}
 
   /**
    * Performs the placement phase for this player

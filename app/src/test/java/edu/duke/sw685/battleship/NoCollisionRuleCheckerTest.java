@@ -14,7 +14,7 @@ public class NoCollisionRuleCheckerTest {
     Ship<Character> sub1 = factory.makeSubmarine(new Placement("A0V"));
     board.tryAddShip(sub1);
     Ship<Character> dst1 = factory.makeDestroyer(new Placement("C3H"));
-    assertTrue(checker.checkMyRule(dst1, board));
+    assertNull(checker.checkMyRule(dst1, board));
 
   }
 
@@ -27,9 +27,12 @@ public class NoCollisionRuleCheckerTest {
     board.tryAddShip(dst1);
 
     Ship<Character> sub1 = factory.makeSubmarine(new Placement("A0H"));
-    assertFalse(checker.checkMyRule(sub1, board));
+    String result = checker.checkMyRule(sub1, board);
+    assertNotNull(result);
+    assertEquals("That placement is invalid: the ship overlaps another ship.", result);
     Ship<Character> sub2 = factory.makeSubmarine(new Placement("A0V"));
-    assertFalse(checker.checkMyRule(sub2, board));
+    assertNotNull(checker.checkMyRule(sub2, board));
+    assertEquals("That placement is invalid: the ship overlaps another ship.", checker.checkMyRule(sub2, board));
   }
 
 
@@ -44,7 +47,7 @@ public class NoCollisionRuleCheckerTest {
     Ship<Character> sub1 = factory.makeSubmarine(new Placement("A0V"));
     board.tryAddShip(sub1);
     Ship<Character> dst1 = factory.makeDestroyer(new Placement("C3V"));
-    assertTrue(noCollision.checkPlacement(dst1, board));
+    assertNull(noCollision.checkPlacement(dst1, board));
   }
 
 
@@ -66,13 +69,16 @@ public class NoCollisionRuleCheckerTest {
     board.tryAddShip(bat1);
 
     Ship<Character> car1 = factory.makeCarrier(new Placement("A7V"));
-    assertTrue(noCollision.checkPlacement(car1, board));
+    assertNull(noCollision.checkPlacement(car1, board));
 //collisions
     Ship<Character> car2 = factory.makeCarrier(new Placement("A0H"));
-    assertFalse(noCollision.checkPlacement(car2, board));
+    assertNotNull(noCollision.checkPlacement(car2, board));
+    assertEquals("That placement is invalid: the ship overlaps another ship.", noCollision.checkPlacement(car2, board));
     Ship<Character> sub2 = factory.makeSubmarine(new Placement("C4V"));
-    assertFalse(noCollision.checkPlacement(sub2, board));
+    assertNotNull(noCollision.checkPlacement(sub2, board));
+    assertEquals("That placement is invalid: the ship overlaps another ship.", noCollision.checkPlacement(sub2, board));    
     Ship<Character> sub3 = factory.makeSubmarine(new Placement("F5V"));
-    assertFalse(noCollision.checkPlacement(sub3, board));
+    assertNotNull(noCollision.checkPlacement(sub3, board));
+    assertEquals("That placement is invalid: the ship overlaps another ship.", noCollision.checkPlacement(sub3, board));
   }
 }
