@@ -31,9 +31,11 @@ public class Placement {
     char orient = descr.charAt(2);
     this.orientation = Character.toUpperCase(orient);
     
-    // Validate orientation (for now, only H and V are valid)
-    if (this.orientation != 'H' && this.orientation != 'V') {
-      throw new IllegalArgumentException("Orientation must be H(h) OR V(V), but is " + orient);
+    // Validate orientation
+    if (this.orientation != 'H' && this.orientation != 'V' &&
+        this.orientation != 'U' && this.orientation != 'R' &&
+        this.orientation != 'D' && this.orientation != 'L') {
+      throw new IllegalArgumentException("Orientation must be one of H, V, U, R, D, L, but is " + orient);
     }
   }
 

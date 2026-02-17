@@ -140,4 +140,27 @@ public void test_allShipsSunk() {
     b.fireAt(new Coordinate(1, 2));
     assertTrue(b.allShipsSunk()); // All sunk now!
 }
+
+@Test
+public void test_getShipAt() {
+    BattleShipBoard<Character> b = new BattleShipBoard<Character>(10, 20, 'X');
+    V1ShipFactory factory = new V1ShipFactory();
+    Ship<Character> sub = factory.makeSubmarine(new Placement("A0V"));
+    b.tryAddShip(sub);
+    assertSame(sub, b.getShipAt(new Coordinate(0, 0)));
+    assertSame(sub, b.getShipAt(new Coordinate(1, 0)));
+    assertNull(b.getShipAt(new Coordinate(5, 5)));
+}
+
+@Test
+public void test_removeShip() {
+    BattleShipBoard<Character> b = new BattleShipBoard<Character>(10, 20, 'X');
+    V1ShipFactory factory = new V1ShipFactory();
+    Ship<Character> sub = factory.makeSubmarine(new Placement("A0V"));
+    b.tryAddShip(sub);
+    assertNotNull(b.whatIsAtForSelf(new Coordinate(0, 0)));
+    b.removeShip(sub);
+    assertNull(b.whatIsAtForSelf(new Coordinate(0, 0)));
+    assertNull(b.getShipAt(new Coordinate(0, 0)));
+}
 }

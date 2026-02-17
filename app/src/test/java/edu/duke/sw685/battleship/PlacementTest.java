@@ -114,4 +114,25 @@ public class PlacementTest {
     assertThrows(IllegalArgumentException.class, () -> new Placement("A01"));
     assertThrows(IllegalArgumentException.class, () -> new Placement("A0 "));
   }
+
+  @Test
+  public void test_new_orientations_URDL() {
+    Placement pU = new Placement("A0U");
+    assertEquals('U', pU.getOrientation());
+    assertEquals(new Coordinate(0, 0), pU.getWhere());
+
+    Placement pR = new Placement("B3R");
+    assertEquals('R', pR.getOrientation());
+
+    Placement pD = new Placement("C5d");
+    assertEquals('D', pD.getOrientation());
+
+    Placement pL = new Placement("D7l");
+    assertEquals('L', pL.getOrientation());
+
+    // Constructor with char also works
+    Placement pU2 = new Placement(new Coordinate(0, 0), 'u');
+    assertEquals('U', pU2.getOrientation());
+    assertEquals(pU, pU2);
+  }
 }

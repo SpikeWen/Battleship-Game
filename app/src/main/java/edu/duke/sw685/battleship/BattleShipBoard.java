@@ -102,4 +102,20 @@ public boolean allShipsSunk() {
     return true;
 }
 
+@Override
+public Ship<T> removeShip(Ship<T> ship) {
+    myShips.remove(ship);
+    return ship;
+}
+
+@Override
+public Ship<T> getShipAt(Coordinate c) {
+    for (Ship<T> s : myShips) {
+        if (s.occupiesCoordinates(c)) {
+            return s;
+        }
+    }
+    return null;
+}
+
 }
