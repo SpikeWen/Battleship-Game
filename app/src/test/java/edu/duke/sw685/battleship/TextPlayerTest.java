@@ -217,4 +217,18 @@ void test_playOneTurn_invalid_then_valid() throws IOException {
     assertTrue(output.contains("Bro! You missed!"));
 }
 
+
+@Test
+void test_playOneTurn_OutOfBoundsThenValid() throws IOException {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    Board<Character> enemyBoard = new BattleShipBoard<Character>(10, 20, 'X');
+    BoardTextView enemyView = new BoardTextView(enemyBoard);
+    TextPlayer player = createTextPlayer(10, 20, "Z0\nA5\n", bytes);
+    player.playOneTurn(enemyBoard, enemyView, "B");
+    String output = bytes.toString();
+    assertTrue(output.contains("That coordinate is invalid: it does not have the correct format."));
+    assertTrue(output.contains("Bro! You missed!"));
+}
+
+
 }
