@@ -231,9 +231,7 @@ public class TextPlayer {
         Ship<Character> ship = enemyBoard.getShipAt(new Coordinate(r, c));
         if (ship != null) {
           String key = ship.getName() + "s";
-          if (counts.containsKey(key)) {
-            counts.put(key, counts.get(key) + 1);
-          }
+          counts.put(key, counts.getOrDefault(key, 0) + 1);
         }
       }
     }
@@ -293,16 +291,16 @@ public class TextPlayer {
   public void doPlacementPhase() throws IOException {
     out.print(view.displayMyOwnBoard());
 
-    out.print("Player " + name + ": you are going to place the following ships (which are all\n");
-    out.print("rectangular). For each ship, type the coordinate of the upper left\n");
-    out.print("side of the ship, followed by either H (for horizontal) or V (for\n");
-    out.print("vertical).  For example M4H would place a ship horizontally starting\n");
-    out.print("at M4 and going to the right.  You have\n");
+    out.print("Player " + name + ": you are going to place the following ships.\n");
+    out.print("For submarines and destroyers, type the coordinate of the upper left\n");
+    out.print("side of the ship, followed by H (horizontal) or V (vertical).\n");
+    out.print("For battleships and carriers, use U (up), R (right), D (down), or L (left).\n");
+    out.print("The coordinate names the upper-left corner of the bounding rectangle.\n");
     out.print("\n");
     out.print("2 \"Submarines\" ships that are 1x2\n");
     out.print("3 \"Destroyers\" that are 1x3\n");
-    out.print("3 \"Battleships\" that are 1x4\n");
-    out.print("2 \"Carriers\" that are 1x6\n");
+    out.print("3 \"Battleships\" that have a special shape (use U/R/D/L)\n");
+    out.print("2 \"Carriers\" that have a special shape (use U/R/D/L)\n");
     out.print("\n");
 
     for (String shipName : shipsToPlace) {

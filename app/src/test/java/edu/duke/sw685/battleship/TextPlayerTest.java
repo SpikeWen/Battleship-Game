@@ -229,6 +229,16 @@ public class TextPlayerTest {
     assertTrue(output.contains("Bro! You missed!"));
   }
 
+  @Test
+  void test_playOneTurn_eof_in_menu() {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    Board<Character> enemyBoard = new BattleShipBoard<Character>(10, 20, 'X');
+    BoardTextView enemyView = new BoardTextView(enemyBoard);
+    // Empty input → readLine() returns null → EOFException in menu
+    TextPlayer player = createTextPlayer(10, 20, "", bytes);
+    assertThrows(EOFException.class, () -> player.playOneTurn(enemyBoard, enemyView, "B"));
+  }
+
   // --- Sonar scan tests ---
 
   @Test
@@ -476,5 +486,70 @@ public class TextPlayerTest {
     player.playOneTurn(enemyBoard, enemyView, "B");
     String out = bytes.toString();
     assertTrue(out.contains("Invalid choice, please try again."));
+  }
+
+  // Move a HORIZONTAL ship to cover the same-row sort comparator (lines 148-149, 191-192)
+  @Test
+  void test_playOneTurn_move_horizontalShip() throws IOException {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    PrintStream output = new PrintStream(bytes, true);
+    Board<Character> board = new BattleShipBoard<Character>(10, 20, 'X');
+    V1ShipFactory factory = new V1ShipFactory();
+    // Submarine at A0H: occupies (0,0) and (0,1) — same row, different columns
+    board.tryAddShip(factory.makeSubmarine(new Placement("A0H")));
+    // Move to C0H
+    BufferedReader input = new BufferedReader(new StringReader("M\nA0\nC0H\n"));
+    TextPlayer player = new TextPlayer("A", board, input, output, factory);
+    Board<Character> enemyBoard = new BattleShipBoard<Character>(10, 20, 'X');
+    BoardTextView enemyView = new BoardTextView(enemyBoard);
+
+    player.playOneTurn(enemyBoard, enemyView, "B");
+    // Should now be at C0, C1
+    assertNotNull(board.getShipAt(new Coordinate(2, 0)));
+    assertNotNull(board.getShipAt(new Coordinate(2, 1)));
+    assertNull(board.getShipAt(new Coordinate(0, 0)));
+    assertEquals(2, player.moveRemaining);
+  }
+
+  // Sonar that yields exactly 1 square for a ship type — covers singular "square" output (lines 243-244)
+  @Test
+  void test_playOneTurn_sonar_singleSquareOutput() throws IOException {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    Board<Character> enemyBoard = new BattleShipBoard<Character>(10, 20, 'X');
+    V1ShipFactory factory = new V1ShipFactory();
+    // Submarine at A9V: cells (0,9) and (1,9)
+    // Scan center at A6 (row=0, col=6): Manhattan distance to (0,9) = 3 → included; to (1,9) = 4 → excluded
+    enemyBoard.tryAddShip(factory.makeSubmarine(new Placement("A9V")));
+    BoardTextView enemyView = new BoardTextView(enemyBoard);
+    TextPlayer player = createTextPlayer(10, 20, "S\nA6\n", bytes);
+    player.playOneTurn(enemyBoard, enemyView, "B");
+    String out = bytes.toString();
+    // Exactly 1 submarine square in range
+    assertTrue(out.contains("Submarines occupy 1 square"));
+    assertTrue(out.contains("Destroyers occupy 0 squares"));
+  }
+
+  // doPlacementPhase full flow — covers lines 293+ of TextPlayer
+  @Test
+  void test_doPlacementPhase() throws IOException {
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    // 10 ships: 2 Sub + 3 Des + 3 Battle + 2 Carrier, all placed vertically
+    String input = "A0V\nA1V\nA2V\nA3V\nA4V\nA5V\nA6V\nA7V\nA8V\nA9V\n";
+    BufferedReader inputReader = new BufferedReader(new StringReader(input));
+    PrintStream out = new PrintStream(bytes, true);
+    Board<Character> board = new BattleShipBoard<Character>(10, 20, 'X');
+    V1ShipFactory shipFactory = new V1ShipFactory();
+    TextPlayer player = new TextPlayer("A", board, inputReader, out, shipFactory);
+
+    player.doPlacementPhase();
+
+    String output = bytes.toString();
+    assertTrue(output.contains("2 \"Submarines\" ships that are 1x2"));
+    assertTrue(output.contains("3 \"Destroyers\" that are 1x3"));
+    assertTrue(output.contains("3 \"Battleships\" that have a special shape (use U/R/D/L)"));
+    assertTrue(output.contains("2 \"Carriers\" that have a special shape (use U/R/D/L)"));
+    // Board should have all ships placed
+    assertNotNull(board.getShipAt(new Coordinate(0, 0)));
+    assertNotNull(board.getShipAt(new Coordinate(0, 9)));
   }
 }

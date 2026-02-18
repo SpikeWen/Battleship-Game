@@ -60,18 +60,32 @@ public class App {
    * @param args command line arguments 
    * @throws IOException if there is an error reading input
    */
+  /**
+   * Prompt the user to choose human or computer for a given player slot
+   */
+  static TextPlayer createPlayer(String playerName, Board<Character> board,
+                                  BufferedReader input, PrintStream out,
+                                  AbstractShipFactory<Character> factory) throws IOException {
+    out.println("Will Player " + playerName + " be controlled by a (h)uman or (c)omputer?");
+    String choice = input.readLine();
+    if (choice != null && choice.trim().equalsIgnoreCase("c")) {
+      return new ComputerPlayer(playerName, board, out, factory);
+    }
+    return new TextPlayer(playerName, board, input, out, factory);
+  }
+
   public static void main(String[] args) throws IOException {
-    Board<Character> b1 = new BattleShipBoard<Character>(10, 20);
-    Board<Character> b2 = new BattleShipBoard<Character>(10, 20);
+    Board<Character> b1 = new BattleShipBoard<Character>(10, 20, 'X');
+    Board<Character> b2 = new BattleShipBoard<Character>(10, 20, 'X');
     BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     PrintStream out = System.out;
-    V1ShipFactory factory = new V1ShipFactory();
-    
-    TextPlayer player1 = new TextPlayer("A", b1, input, System.out, factory);
-    TextPlayer player2 = new TextPlayer("B", b2, input, System.out, factory);
-    
+    V2ShipFactory factory = new V2ShipFactory();
+
+    TextPlayer player1 = createPlayer("A", b1, input, out, factory);
+    TextPlayer player2 = createPlayer("B", b2, input, out, factory);
+
     App app = new App(player1, player2);
     app.doPlacementPhase();
     app.doAttackingPhase();
-}
+  }
 }

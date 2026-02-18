@@ -163,4 +163,15 @@ public void test_removeShip() {
     assertNull(b.whatIsAtForSelf(new Coordinate(0, 0)));
     assertNull(b.getShipAt(new Coordinate(0, 0)));
 }
+
+@Test
+public void test_constructor_no_missInfo() {
+    // Covers the BattleShipBoard(int w, int h) constructor
+    BattleShipBoard<Character> b = new BattleShipBoard<Character>(5, 5);
+    assertEquals(5, b.getWidth());
+    assertEquals(5, b.getHeight());
+    // missInfo is null — misses return null from enemy view
+    b.fireAt(new Coordinate(0, 0));
+    assertNull(b.whatIsAtForEnemy(new Coordinate(0, 0)));
+}
 }
