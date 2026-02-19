@@ -56,7 +56,6 @@ void test_doAttackingPhase_player1Wins() throws IOException {
     b2.tryAddShip(factory.makeSubmarine(new Placement("A1V")));
 
     // Turn order: P1 Fire A1 (hit) -> P2 Fire A0 (hit) -> P1 Fire B1 (sink) -> P1 wins
-    // Each turn needs "F\n" to select Fire action
     String input = "F\nA1\nF\nA0\nF\nB1\n";
     BufferedReader inputReader = new BufferedReader(new StringReader(input));
     PrintStream out = new PrintStream(bytes, true);
@@ -109,7 +108,7 @@ void test_doPlacementPhase() throws IOException {
 }
 
 @Test
-void test_createPlayer_human() throws IOException {
+void test_createPlayerHuman() throws IOException {
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
     PrintStream out = new PrintStream(bytes, true);
     Board<Character> board = new BattleShipBoard<Character>(10, 20, 'X');
@@ -121,7 +120,7 @@ void test_createPlayer_human() throws IOException {
 }
 
 @Test
-void test_createPlayer_computer() throws IOException {
+void test_createPlayerComputer() throws IOException {
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
     PrintStream out = new PrintStream(bytes, true);
     Board<Character> board = new BattleShipBoard<Character>(10, 20, 'X');
@@ -134,12 +133,10 @@ void test_createPlayer_computer() throws IOException {
 @Test
 @ResourceLock(value = Resources.SYSTEM_OUT, mode = ResourceAccessMode.READ_WRITE)
 void test_main_computerVsComputer() throws IOException {
-    // Run a full computer vs computer game via main() to cover App.main() code paths
     InputStream oldIn = System.in;
     PrintStream oldOut = System.out;
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
     try {
-        // "c\nc\n" → both players are computers
         System.setIn(new java.io.ByteArrayInputStream("c\nc\n".getBytes()));
         System.setOut(new PrintStream(bytes, true));
         App.main(new String[0]);
@@ -148,8 +145,7 @@ void test_main_computerVsComputer() throws IOException {
         System.setOut(oldOut);
     }
     String output = bytes.toString();
-    // One player must have won
-    assertTrue(output.contains("won the game!"));
+    assertTrue(output.contains("won the game!"));//one must win
 }
 
 }

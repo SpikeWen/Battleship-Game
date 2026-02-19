@@ -54,15 +54,7 @@ public class App {
 
 
 
-  /**
-   * Main entry point for the application
-   * 
-   * @param args command line arguments 
-   * @throws IOException if there is an error reading input
-   */
-  /**
-   * Prompt the user to choose human or computer for a given player slot
-   */
+ //to choose human or computer player and main entry
   static TextPlayer createPlayer(String playerName, Board<Character> board,
                                   BufferedReader input, PrintStream out,
                                   AbstractShipFactory<Character> factory) throws IOException {

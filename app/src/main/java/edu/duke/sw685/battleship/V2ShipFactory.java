@@ -1,10 +1,6 @@
 package edu.duke.sw685.battleship;
 
 public class V2ShipFactory implements AbstractShipFactory<Character> {
-
-  /**
-   * Helper to create rectangular ships (Submarine, Destroyer) — same as V1
-   */
   protected Ship<Character> createRectShip(Placement where, int w, int h, char letter, String name) {
     char orientation = where.getOrientation();
     if (orientation == 'V') {
@@ -48,7 +44,7 @@ public class V2ShipFactory implements AbstractShipFactory<Character> {
     }
     return new NonRectangleShip<>("Battleship", where.getWhere(), offsets, 'b', '*');
   }
-
+//some offset options
   @Override
   public Ship<Character> makeCarrier(Placement where) {
     char orientation = where.getOrientation();

@@ -14,24 +14,15 @@ public class Placement {
     this.orientation = Character.toUpperCase(orientation);
   }
 
-  /**
-   * More specific input: Placement ,like "A0V" or "B3H"
-   * @param descr is the string description of the placement 
-   */
+  //@param descr is the string description of the placement 
   public Placement(String descr) {
     if (descr == null || descr.length() != 3) {
       throw new IllegalArgumentException("Placement string must be exactly 3 characters, but is " + descr);
     }
-    
-  //to get coordiante
     String coordString = descr.substring(0, 2);
     this.where = new Coordinate(coordString);
-    
-    //to get orientation
     char orient = descr.charAt(2);
     this.orientation = Character.toUpperCase(orient);
-    
-    // Validate orientation
     if (this.orientation != 'H' && this.orientation != 'V' &&
         this.orientation != 'U' && this.orientation != 'R' &&
         this.orientation != 'D' && this.orientation != 'L') {

@@ -5,9 +5,7 @@ import java.util.HashSet;
 public class NonRectangleShip<T> extends BasicShip<T> {
   private final String name;
 
-  /**
-   * Generate coordinates from an upper-left corner and a set of row/col offsets
-   */
+  // Generate coordinates from an upper-left corner and a set of row/col offsets
   static HashSet<Coordinate> makeCoords(Coordinate upperLeft, int[][] offsets) {
     HashSet<Coordinate> coords = new HashSet<>();
     for (int[] offset : offsets) {

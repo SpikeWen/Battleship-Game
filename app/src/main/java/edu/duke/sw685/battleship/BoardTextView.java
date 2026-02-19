@@ -1,10 +1,6 @@
 package edu.duke.sw685.battleship;
 
 import java.util.function.Function;
-
-/**
- * This class handles textual display of a Board
- */
 public class BoardTextView {
   private final Board<Character> toDisplay;
 

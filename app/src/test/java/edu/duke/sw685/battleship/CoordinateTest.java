@@ -16,20 +16,18 @@ public class CoordinateTest {
     assertEquals(5, c2.getRow());
     assertEquals(8, c2.getColumn());
   }
-
   @Test
   public void test_equals() {
     Coordinate c1 = new Coordinate(1, 2);
     Coordinate c2 = new Coordinate(1, 2);
     Coordinate c3 = new Coordinate(1, 3);
     Coordinate c4 = new Coordinate(3, 2);
-    
-    assertEquals(c1, c1);   // equals should be reflexive
-    assertEquals(c1, c2);   // different objects but same contents
-    assertNotEquals(c1, c3);  // different contents
+    assertEquals(c1, c1);   
+    assertEquals(c1, c2);  
+    assertNotEquals(c1, c3); 
     assertNotEquals(c1, c4);
     assertNotEquals(c3, c4);
-    assertNotEquals(c1, "(1, 2)"); // different types
+    assertNotEquals(c1, "(1, 2)"); 
   }
 
   @Test
@@ -61,19 +59,15 @@ public class CoordinateTest {
     Coordinate c1 = new Coordinate("B3");
     assertEquals(1, c1.getRow());
     assertEquals(3, c1.getColumn());
-    
     Coordinate c2 = new Coordinate("D5");
     assertEquals(3, c2.getRow());
     assertEquals(5, c2.getColumn());
-    
     Coordinate c3 = new Coordinate("A9");
     assertEquals(0, c3.getRow());
     assertEquals(9, c3.getColumn());
-    
     Coordinate c4 = new Coordinate("Z0");
     assertEquals(25, c4.getRow());
     assertEquals(0, c4.getColumn());
-    
     // Test lowercase input (should be converted to uppercase)
     Coordinate c5 = new Coordinate("b3");
     assertEquals(1, c5.getRow());

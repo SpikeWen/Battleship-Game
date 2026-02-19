@@ -51,13 +51,12 @@ public class TextPlayer {
     out.print(view.displayMyBoardWithEnemyNextToIt(enemyView, "Your ocean", "Player " + enemyName + "'s ocean"));
     out.println();
 
-    // If no special actions left, go straight to fire
+    // we both have 3 times to use skills
     if (moveRemaining <= 0 && sonarRemaining <= 0) {
       doFire(enemyBoard);
       return;
     }
-
-    // Show action menu and get choice
+//action meunu
     while (true) {
       out.println("Possible actions for Player " + name + ":\n");
       out.println(" F Fire at a square");
@@ -82,7 +81,7 @@ public class TextPlayer {
         if (doMove()) {
           return;
         }
-        // If move failed, re-display board and re-prompt
+        // If move failed, re-play the part
         out.print(view.displayMyBoardWithEnemyNextToIt(enemyView, "Your ocean", "Player " + enemyName + "'s ocean"));
         out.println();
       } else if (choice.equals("S") && sonarRemaining > 0) {
@@ -94,9 +93,7 @@ public class TextPlayer {
     }
   }
 
-  /**
-   * Fire at enemy board (extracted from old playOneTurn)
-   */
+//fire at a square
   protected void doFire(Board<Character> enemyBoard) throws IOException {
     Coordinate attackCoord = null;
     while (attackCoord == null) {
@@ -119,11 +116,7 @@ public class TextPlayer {
       out.println("OMG! You hit a " + hitShip.getName() + "!");
     }
   }
-
-  /**
-   * Move a ship to a new location, preserving damage at relative positions.
-   * Returns true if move succeeded, false if it failed (invalid selection).
-   */
+//move a ship but might fail
   protected boolean doMove() throws IOException {
     // Prompt for which ship to move
     Coordinate shipCoord;
@@ -138,8 +131,7 @@ public class TextPlayer {
       out.println("There is no ship at that coordinate.");
       return false;
     }
-
-    // Get old ship's coordinates sorted and hit status
+// Get old ship's coordinates sorted and hit status
     ArrayList<Coordinate> oldCoords = new ArrayList<>();
     for (Coordinate c : oldShip.getCoordinates()) {
       oldCoords.add(c);
@@ -152,8 +144,7 @@ public class TextPlayer {
     for (Coordinate c : oldCoords) {
       hitStatus.add(oldShip.wasHitAt(c));
     }
-
-    // Prompt for new placement
+// Prompt for new placement
     Placement newPlacement;
     try {
       newPlacement = readPlacement("Player " + name + ", where do you want to move it to?");
@@ -161,8 +152,6 @@ public class TextPlayer {
       out.println("That placement is invalid: " + e.getMessage());
       return false;
     }
-
-    // Create new ship
     String shipName = oldShip.getName();
     Ship<Character> newShip;
     try {
@@ -171,18 +160,17 @@ public class TextPlayer {
       out.println("That placement is invalid: " + e.getMessage());
       return false;
     }
-
     // Remove old ship, try to add new ship
     theBoard.removeShip(oldShip);
     String addResult = theBoard.tryAddShip(newShip);
     if (addResult != null) {
-      // Failed — put old ship back
+      // if failed,then put old ship back
       theBoard.tryAddShip(oldShip);
       out.println(addResult);
       return false;
     }
 
-    // Restore damage at same relative positions
+    //Restore
     ArrayList<Coordinate> newCoords = new ArrayList<>();
     for (Coordinate c : newShip.getCoordinates()) {
       newCoords.add(c);
@@ -201,9 +189,7 @@ public class TextPlayer {
     return true;
   }
 
-  /**
-   * Perform a sonar scan on the enemy board
-   */
+  //sonar scan to see how many ships in the diamond area
   protected void doSonar(Board<Character> enemyBoard) throws IOException {
     Coordinate center;
     try {
@@ -213,8 +199,7 @@ public class TextPlayer {
       sonarRemaining--;
       return;
     }
-
-    // Count ships in diamond pattern (Manhattan distance <= 3)
+    // Count ships in diamond pattern
     LinkedHashMap<String, Integer> counts = new LinkedHashMap<>();
     counts.put("Submarines", 0);
     counts.put("Destroyers", 0);
@@ -253,14 +238,12 @@ public class TextPlayer {
     shipCreationFns.put("Battleship", (p) -> shipFactory.makeBattleship(p));
     shipCreationFns.put("Carrier", (p) -> shipFactory.makeCarrier(p));
   }
-
   protected void setupShipCreationList() {
     shipsToPlace.addAll(Collections.nCopies(2, "Submarine"));
     shipsToPlace.addAll(Collections.nCopies(3, "Destroyer"));
     shipsToPlace.addAll(Collections.nCopies(3, "Battleship"));
     shipsToPlace.addAll(Collections.nCopies(2, "Carrier"));
   }
-
   public Placement readPlacement(String prompt) throws IOException {
     out.println(prompt);
     String s = inputReader.readLine();

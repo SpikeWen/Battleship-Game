@@ -221,7 +221,7 @@ public class TextPlayerTest {
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
     Board<Character> enemyBoard = new BattleShipBoard<Character>(10, 20, 'X');
     BoardTextView enemyView = new BoardTextView(enemyBoard);
-    // "X" invalid choice, then "F" to fire
+    // "X" , then "F" 
     TextPlayer player = createTextPlayer(10, 20, "X\nF\nA5\n", bytes);
     player.playOneTurn(enemyBoard, enemyView, "B");
     String output = bytes.toString();
@@ -238,8 +238,7 @@ public class TextPlayerTest {
     TextPlayer player = createTextPlayer(10, 20, "", bytes);
     assertThrows(EOFException.class, () -> player.playOneTurn(enemyBoard, enemyView, "B"));
   }
-
-  // --- Sonar scan tests ---
+//sonar test
 
   @Test
   void test_playOneTurn_sonar() throws IOException {
@@ -303,8 +302,7 @@ public class TextPlayerTest {
     assertTrue(output.contains("Submarines occupy"));
   }
 
-  // --- Move ship tests ---
-
+  //Move ship tests 
   @Test
   void test_playOneTurn_move_success() throws IOException {
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -313,12 +311,10 @@ public class TextPlayerTest {
     V1ShipFactory factory = new V1ShipFactory();
     BufferedReader input = new BufferedReader(new StringReader("M\nA0\nC0V\n"));
     TextPlayer player = new TextPlayer("A", board, input, output, factory);
-    // Place a submarine at A0V
+    // Place a submarine
     board.tryAddShip(factory.makeSubmarine(new Placement("A0V")));
-
     Board<Character> enemyBoard = new BattleShipBoard<Character>(10, 20, 'X');
     BoardTextView enemyView = new BoardTextView(enemyBoard);
-
     player.playOneTurn(enemyBoard, enemyView, "B");
     // Ship should now be at C0, D0
     assertNotNull(board.getShipAt(new Coordinate(2, 0)));
@@ -337,12 +333,10 @@ public class TextPlayerTest {
     Ship<Character> sub = factory.makeSubmarine(new Placement("A0V"));
     board.tryAddShip(sub);
     sub.recordHitAt(new Coordinate(0, 0));
-
     BufferedReader input = new BufferedReader(new StringReader("M\nA0\nC0V\n"));
     TextPlayer player = new TextPlayer("A", board, input, output, factory);
     Board<Character> enemyBoard = new BattleShipBoard<Character>(10, 20, 'X');
     BoardTextView enemyView = new BoardTextView(enemyBoard);
-
     player.playOneTurn(enemyBoard, enemyView, "B");
     // New ship at C0V: C0 should be hit (same relative position), D0 should not
     Ship<Character> movedShip = board.getShipAt(new Coordinate(2, 0));
@@ -394,12 +388,11 @@ public class TextPlayerTest {
     Board<Character> board = new BattleShipBoard<Character>(10, 20, 'X');
     V1ShipFactory factory = new V1ShipFactory();
     board.tryAddShip(factory.makeSubmarine(new Placement("A0V")));
-    // Move to invalid placement "ZZZ", then Fire
+    // Move to invalid placement then Fire
     BufferedReader input = new BufferedReader(new StringReader("M\nA0\nZZZ\nF\nA0\n"));
     TextPlayer player = new TextPlayer("A", board, input, output, factory);
     Board<Character> enemyBoard = new BattleShipBoard<Character>(10, 20, 'X');
     BoardTextView enemyView = new BoardTextView(enemyBoard);
-
     player.playOneTurn(enemyBoard, enemyView, "B");
     String out = bytes.toString();
     assertTrue(out.contains("That placement is invalid"));
@@ -451,7 +444,7 @@ public class TextPlayerTest {
     Board<Character> board = new BattleShipBoard<Character>(10, 20, 'X');
     V1ShipFactory factory = new V1ShipFactory();
     board.tryAddShip(factory.makeSubmarine(new Placement("A0V")));
-    // Try to move sub with orientation U (invalid for submarine), then Fire
+    //move to invalid orientation "U", then Fire
     BufferedReader input = new BufferedReader(new StringReader("M\nA0\nA0U\nF\nA0\n"));
     TextPlayer player = new TextPlayer("A", board, input, output, factory);
     Board<Character> enemyBoard = new BattleShipBoard<Character>(10, 20, 'X');
@@ -462,7 +455,7 @@ public class TextPlayerTest {
     assertTrue(out.contains("That placement is invalid"));
   }
 
-  // Test choosing M when moveRemaining is 0 (treated as invalid choice)
+  // Test choosing M when moveRemaining is 0 (invalid)
   @Test
   void test_playOneTurn_move_notAvailable() throws IOException {
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -488,14 +481,14 @@ public class TextPlayerTest {
     assertTrue(out.contains("Invalid choice, please try again."));
   }
 
-  // Move a HORIZONTAL ship to cover the same-row sort comparator (lines 148-149, 191-192)
+  // Move a HORIZONTAL ship to cover the same-row sort comparator 
   @Test
   void test_playOneTurn_move_horizontalShip() throws IOException {
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
     PrintStream output = new PrintStream(bytes, true);
     Board<Character> board = new BattleShipBoard<Character>(10, 20, 'X');
     V1ShipFactory factory = new V1ShipFactory();
-    // Submarine at A0H: occupies (0,0) and (0,1) — same row, different columns
+    // Submarine at A0H: occupies (0,0) and (0,1),same row, different columns
     board.tryAddShip(factory.makeSubmarine(new Placement("A0H")));
     // Move to C0H
     BufferedReader input = new BufferedReader(new StringReader("M\nA0\nC0H\n"));
@@ -511,7 +504,7 @@ public class TextPlayerTest {
     assertEquals(2, player.moveRemaining);
   }
 
-  // Sonar that yields exactly 1 square for a ship type — covers singular "square" output (lines 243-244)
+  // Sonar that yields exactly 1 square for a ship type , covers singular "square" output 
   @Test
   void test_playOneTurn_sonar_singleSquareOutput() throws IOException {
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -529,11 +522,10 @@ public class TextPlayerTest {
     assertTrue(out.contains("Destroyers occupy 0 squares"));
   }
 
-  // doPlacementPhase full flow — covers lines 293+ of TextPlayer
   @Test
   void test_doPlacementPhase() throws IOException {
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-    // 10 ships: 2 Sub + 3 Des + 3 Battle + 2 Carrier, all placed vertically
+//all palced verticaled
     String input = "A0V\nA1V\nA2V\nA3V\nA4V\nA5V\nA6V\nA7V\nA8V\nA9V\n";
     BufferedReader inputReader = new BufferedReader(new StringReader(input));
     PrintStream out = new PrintStream(bytes, true);

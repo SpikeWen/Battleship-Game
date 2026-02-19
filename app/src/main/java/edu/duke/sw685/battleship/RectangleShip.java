@@ -49,24 +49,11 @@ public class RectangleShip<T> extends BasicShip<T> {
    * @param data is the character to display when not hit
    * @param onHit is the character to display when hit
    */
-  public RectangleShip(String name, Coordinate upperLeft, int width, int height, 
-                       T data, T onHit) {
+  public RectangleShip(String name, Coordinate upperLeft, int width, int height, T data, T onHit) {
     this(name, upperLeft, width, height, new SimpleShipDisplayInfo<T>(data, onHit),new SimpleShipDisplayInfo<T>(null, data));
   }
 
-  /**
-   * Convenience constructor for a 1x1 ship
-   * 
-   * @param name is the name of this ship
-   * @param upperLeft is the coordinate
-   * @param data is the character to display when not hit
-   * @param onHit is the character to display when hit
-   */
-  /* 
-  public RectangleShip( Coordinate upperLeft, T data, T onHit) {
-    this("testship", upperLeft, 1, 1, data, onHit);
-  }*/
-
+//1*1ship
   public RectangleShip(String name, Coordinate upperLeft, T data, T onHit) {
     this(name, upperLeft, 1, 1, data, onHit);
 }

@@ -154,7 +154,6 @@ public void test_display_side_by_side_empty_boards() {
 
 @Test
 public void test_display_side_by_side_different_sizes() {
-    // Test with different board sizes (5x5)
     Board<Character> myBoard = new BattleShipBoard<Character>(5, 5, 'X');
     Board<Character> enemyBoard = new BattleShipBoard<Character>(5, 5, 'X');
     BoardTextView myView = new BoardTextView(myBoard);
